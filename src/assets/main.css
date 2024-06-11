@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Dana';
+    src: local('Dana'), url(./fonts/Dana/woff2/DanaFaNum-Regular.woff2);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Dana Madium';
+    src: local('Dana Madium'), url(./fonts/Dana/woff2/DanaFaNum-Medium.woff2);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Dana DemiBold';
+    src: local('Dana Bold'), url(./fonts/Dana/woff2/DanaFaNum-DemiBold.woff2);
+    font-display: swap;
+  }
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  a,
+  :placeholder-shown {
+    @apply !font-Dana dark:!text-white;
+  }
+}
+
+.ant-select-selector {
+  @apply !relative  dark:!bg-zinc-800 dark:!text-white border !transition-all;
+}
+.ant-select-dropdown {
+  @apply dark:!bg-zinc-700 dark:child:!text-white;
+}
+.ant-select-item {
+  @apply dark:child:!text-white;
+}
+
+:where(.css-dev-only-do-not-override-16pw25h).ant-select-dropdown
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  @apply dark:!bg-black;
+}
+
+:where(.css-dev-only-do-not-override-16pw25h).ant-menu-light .ant-menu-item-selected {
+  @apply bg-[#e6f4ff] dark:!bg-black;
+}
+
+.ant-notification-notice {
+  @apply dark:bg-zinc-800 dark:text-white;
+}
+.ant-notification-notice-message {
+  @apply dark:text-white;
+}
+:where(.css-dev-only-do-not-override-16pw25h).ant-modal .ant-modal-content,
+.ant-input {
+  @apply dark:!bg-zinc-800 dark:child:!bg-zinc-800 dark:!text-white dark:placeholder:text-gray-400;
+}
+.ant-modal-title,
+.ant-modal-close-x {
+  @apply dark:text-white;
+}
+.ant-modal-confirm-title {
+  @apply dark:!text-white;
+}
+.ant-modal-confirm-content {
+  @apply dark:!text-white;
+}
