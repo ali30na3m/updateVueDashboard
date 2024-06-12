@@ -1,13 +1,13 @@
 <template>
   <div class="child:!flex child:!items-center child:!justify-center child:mx-auto">
     <a-select
+      class="w-full sm:w-[200px] dark:child:text-white"
       v-model:value="citySelect"
       show-search
       :placeholder="$t('weatherSelect')"
-      class="w-full sm:w-[200px] dark:child:text-white"
-      @change="handleChange"
       :options="options"
       :filter-option="filterOption"
+      @change="handleChange"
     ></a-select>
     <div class="mt-4">
       <a-card
@@ -26,12 +26,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { SelectProps } from 'ant-design-vue'
-import weatherData from './data/ir.json'
-import { getApi } from '@/api'
 import { computed, onMounted, ref } from 'vue'
-import type { WeatherTypeData, WeatherApi } from './type'
+import { getApi } from '@/api'
 import { getWeatherDescription } from './weatherStatus'
+import weatherData from './data/ir.json'
+import type { SelectProps } from 'ant-design-vue'
+import type { WeatherTypeData, WeatherApi } from './type'
 
 const citySelect = ref<string | null>(null)
 const weathers = ref<WeatherTypeData[]>(weatherData)
@@ -41,21 +41,22 @@ const options = ref<SelectProps['options']>(
     return { value: weather.city, label: weather.city }
   })
 )
-
 const handleChange = async (value: string) => {
   citySelect.value = value
   const cityDetails = weathers.value.find((weather) => weather.city === value)
   if (cityDetails) {
     await getApi(
       `forecast?latitude=${cityDetails.lat}&longitude=${cityDetails.lng}&current_weather=true`
-    ).then((data: WeatherApi) => (weatherDetails.value = data))
+    )
+      .then((data: WeatherApi) => (weatherDetails.value = data))
+      .catch(() => emptyText())
   }
 }
-
-onMounted(() => {
-  handleChange('Tehran')
-})
-
+const emptyText = () => {
+  if (citySelect.value === null || weatherDetails.value === null) {
+    citySelect.value = '...'
+  }
+}
 const weatherDescription = computed(() => {
   if (weatherDetails.value) {
     return getWeatherDescription(weatherDetails.value.current_weather.weathercode)
@@ -66,6 +67,9 @@ const weatherDescription = computed(() => {
 const filterOption = (input: string, option: any) => {
   return option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
 }
+onMounted(() => {
+  handleChange('Tehran')
+})
 </script>
 
 <style scoped>
