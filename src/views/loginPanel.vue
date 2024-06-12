@@ -13,7 +13,7 @@
       @submit.prevent="clickHandler"
     >
       <a-form-item class="w-full md:w-[300px]" name="username">
-        <a-input :placeholder="$t('username')" v-model:value="username" />
+        <Input :placeholder="$t('username')" v-model:value="username" />
       </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit" :disabled="isSubmitDisable">{{
@@ -25,6 +25,7 @@
 </template>
 
 <script lang="ts" setup>
+import { Input } from 'ant-design-vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 

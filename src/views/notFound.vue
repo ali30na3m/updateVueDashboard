@@ -1,9 +1,6 @@
 <template>
   <div
-    :class="[
-      'flex items-center justify-center flex-col gap-6 h-[100vh]',
-      getTheme === 'dark' && 'bg-zinc-800 text-white'
-    ]"
+    class="flex items-center justify-center flex-col gap-6 h-[100vh] dark:bg-zinc-800 dark:text-white"
   >
     <h1 class="text-2xl sm:text-2xl md:text-6xl">{{ $t('notfound') }}</h1>
     <div>
@@ -20,9 +17,6 @@
   
 <script lang="ts" setup>
 import { ArrowLeftOutlined } from '@ant-design/icons-vue'
-const getTheme = localStorage.getItem('theme')
 </script>
   
-<style scoped>
-</style>
   

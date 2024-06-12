@@ -30,6 +30,3 @@ onMounted(() => {
   }
 })
 </script>
-
-<style>
-</style>

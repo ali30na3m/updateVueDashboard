@@ -12,22 +12,18 @@ import { greetingToUser } from './uniqueMessage'
 const currentTime = ref<string>(new Date().toLocaleTimeString())
 const username = ref<string | null>(null)
 
-username.value = localStorage.getItem('username')
-
 const updateTime = (): void => {
   currentTime.value = new Date().toLocaleTimeString()
 }
 
-let timeNow: any
+const getTimeNow = setInterval(updateTime, 1000)
 
 onMounted(() => {
-  timeNow = setInterval(updateTime, 1000)
+  getTimeNow
+  username.value = localStorage.getItem('username')
 })
 
 onUnmounted(() => {
-  clearInterval(timeNow)
+  clearInterval(getTimeNow)
 })
 </script>
-
-<style>
-</style>

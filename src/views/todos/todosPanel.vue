@@ -2,9 +2,8 @@
   <div class="child:flex child:items-center child:justify-center">
     <div>
       <a-card
-        class="dark:bg-zinc-800 dark:child:!text-white text-center"
+        class="w-[80%] h-[60vh] overflow-y-auto dark:bg-zinc-800 dark:child:!text-white text-center"
         :title="$t('todoList')"
-        style="width: 80%; height: 60vh; overflow-y: scroll"
       >
         <div
           class="flex items-center w-full justify-between border-2 my-2 border-black/10 p-4 rounded-xl child:text-sm md:child:text-2xl"
@@ -13,10 +12,10 @@
         >
           <p>{{ index + 1 }}- {{ todo.title }}</p>
           <div class="flex items-center gap-6">
-            <button @click="showEditModal(todo)" class="text-gray-400">
+            <button class="!text-gray-400" @click="showEditModal(todo)">
               <EditOutlined />
             </button>
-            <button @click="confirmDelete(todo.id)" class="text-red-500">
+            <button class="!text-red-500" @click="confirmDelete(todo.id)">
               <DeleteOutlined />
             </button>
           </div>
@@ -27,83 +26,72 @@
       <a-button class="sm:w-[150px]" type="primary" @click="showModal">
         {{ $t('AddTodo') }}
       </a-button>
-      <a-modal
+      <Modal
         class="modal-centered dark:!bg-zinc-800"
-        v-model:open="modal1Visible"
+        v-model:open="addTodoModal"
+        centered
         :title="$t('AddTodo')"
-        centered
+        :ok-text="$t('yes')"
+        :cancel-text="$t('no')"
         @ok="addTodoHandler"
-        :ok-text="$t('yes')"
-        :cancel-text="$t('no')"
       >
         <div class="flex flex-col items-center">
-          <a-input
-            ref="todoInput"
-            v-model:value="todoVal"
-            @keyup.enter="addTodoHandler"
-            :placeholder="$t('title')"
+          <Input
             class="my-4 w-full md:w-[200px]"
+            v-model:value="todoVal"
+            :placeholder="$t('title')"
+            @keyup.enter="addTodoHandler"
           />
         </div>
-      </a-modal>
-      <a-modal
+      </Modal>
+      <Modal
         class="modal-centered"
-        v-model:open="modal2Visible"
-        :title="$t('editTodo')"
+        v-model:open="editTodoModal"
         centered
-        @ok="editTodoHandler"
+        :title="$t('editTodo')"
         :ok-text="$t('yes')"
         :cancel-text="$t('no')"
+        @ok="editTodoHandler"
       >
         <div class="flex flex-col items-center">
-          <a-input
-            ref="editTodoInput"
+          <Input
             v-model:value="editTodoVal"
-            @keyup.enter="editTodoHandler"
             :placeholder="$t('title')"
-            class="my-4"
-            style="width: calc(100% - 200px)"
+            class="my-4 w-[calc(100% - 200px)]"
+            @keyup.enter="editTodoHandler"
           />
         </div>
-      </a-modal>
+      </Modal>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
-import { ref, onMounted, type Ref } from 'vue'
+import { Input, Modal } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import { Modal } from 'ant-design-vue'
+import { ref, onMounted } from 'vue'
 import { getTodoLocalStorage, notify, setTodoLocalStorage } from '@/utils'
+import type { Ref } from 'vue'
 import type { todoInfo } from './type'
 
 const { t } = useI18n()
 
-const modal1Visible = ref(false)
-const modal2Visible = ref(false)
+const addTodoModal = ref(false)
+const editTodoModal = ref(false)
 const todoVal = ref('')
 const editTodoVal = ref('')
 const editTodoId = ref<string | null>(null)
 const todos = ref<todoInfo[]>([])
 
-onMounted(() => {
-  const savedTodos = getTodoLocalStorage()
-  if (savedTodos) {
-    todos.value = savedTodos
-  }
-})
-
 const showModal = () => {
-  modal1Visible.value = true
+  addTodoModal.value = true
 }
-
 const showEditModal = (todo: todoInfo) => {
   editTodoId.value = todo.id
   editTodoVal.value = todo.title
-  modal2Visible.value = true
+  editTodoModal.value = true
 }
-
 const addTodoHandler = () => {
   const title = todoVal.value.trim()
   if (title) {
@@ -114,12 +102,11 @@ const addTodoHandler = () => {
     todos.value.push(newTodo)
     setTodoLocalStorage(todos.value)
     notify('success', t('successModal'), t('successAdd'))
-    closeModal(modal1Visible, todoVal)
+    closeModal(addTodoModal, todoVal)
   } else {
     notify('error', t('error'), t('errorAdd'))
   }
 }
-
 const editTodoHandler = () => {
   const title = editTodoVal.value.trim()
   if (title && editTodoId.value) {
@@ -128,11 +115,10 @@ const editTodoHandler = () => {
       todo.title = title
       setTodoLocalStorage(todos.value)
       notify('success', t('successModal'), t('successEdit'))
-      closeModal(modal2Visible, editTodoVal, editTodoId)
+      closeModal(editTodoModal, editTodoVal, editTodoId)
     }
   }
 }
-
 const confirmDelete = (id: string) => {
   Modal.confirm({
     title: t('warningEditTodo'),
@@ -146,16 +132,20 @@ const confirmDelete = (id: string) => {
     }
   })
 }
-
 const removeHandler = (id: string) => {
   todos.value = todos.value.filter((todo) => todo.id !== id)
   setTodoLocalStorage(todos.value)
 }
-
 const closeModal = (modal: Ref<boolean>, ...refs: Ref<string | null>[]) => {
   modal.value = false
   refs.forEach((ref) => (ref.value = ''))
 }
+onMounted(() => {
+  const savedTodos = getTodoLocalStorage()
+  if (savedTodos) {
+    todos.value = savedTodos
+  }
+})
 </script>
 
 <style scoped>
